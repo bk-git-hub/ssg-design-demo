@@ -91,7 +91,7 @@ const allCategories = [
 // --- UI 컴포넌트 ---
 const ArticleCard = ({ article }: { article: (typeof allArticles)[0] }) => (
   <Link
-    href='#'
+    href='/articles/1'
     className='block border rounded-lg overflow-hidden group hover:shadow-lg transition-shadow bg-white'
   >
     <div className='overflow-hidden'>
