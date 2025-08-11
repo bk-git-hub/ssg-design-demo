@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Tab } from '@headlessui/react';
 import { notFound, useParams } from 'next/navigation';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, ArrowRight } from 'lucide-react';
 
 // --- Helper Function ---
 function cn(...classes: (string | boolean)[]) {
@@ -287,9 +287,7 @@ const ContentCard = ({
     </div>
   </Link>
 );
-
-// --- 페이지 컴포넌트 ---
-export default function CategoryDetailPage() {
+export default function CategoryDetailPage({}: {}) {
   const params = useParams();
   const currentSlug = params.slug;
   const currentCategoryData = allCategoryData.find(
@@ -300,7 +298,7 @@ export default function CategoryDetailPage() {
     notFound();
   }
 
-  const tabs = ['소개', '프로젝트', '아티클'];
+  const tabs = ['소개', '주요 활동'];
 
   return (
     <div className='bg-gray-50 min-h-screen'>
@@ -373,70 +371,58 @@ export default function CategoryDetailPage() {
               <Tab.Panels className='mt-6'>
                 {/* 소개 패널 */}
                 <Tab.Panel className='prose max-w-none'>
+                  <h3>학습 로드맵</h3>
                   <p>
-                    여기에 {currentCategoryData.name} 분야에 대한 더 상세한
-                    소개나 학습 로드맵 등이 마크다운 형식으로 표시됩니다.
+                    여기에 {currentCategoryData.name} 분야에 대한 상세한 학습
+                    로드맵 등이 마크다운 형식으로 표시됩니다.
                   </p>
                 </Tab.Panel>
 
-                {/* 프로젝트 패널 */}
-                <Tab.Panel>
-                  <div className='flex justify-between items-center mb-6'>
-                    <h2 className='text-2xl font-bold'>프로젝트 목록</h2>
-                    {/* ✨ 로그인 되어있다고 가정하고 항상 버튼 노출 ✨ */}
-                    <Link
-                      href={`/projects/new?category=${currentSlug}`}
-                      className='flex items-center bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg hover:bg-indigo-700'
-                    >
-                      <PlusCircle size={16} className='mr-2' /> 새 프로젝트
-                      만들기
-                    </Link>
-                  </div>
-                  <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                    {currentCategoryData.projects.length > 0 ? (
-                      currentCategoryData.projects.map((p) => (
+                {/* 주요 활동 패널 */}
+                <Tab.Panel className='space-y-12'>
+                  {/* 대표 프로젝트 섹션 */}
+                  <section>
+                    <div className='flex justify-between items-center mb-4'>
+                      <h2 className='text-2xl font-bold'>대표 프로젝트</h2>
+                      <Link
+                        href={`/projects?category=${currentSlug}`}
+                        className='flex items-center text-sm font-semibold text-indigo-600 hover:underline'
+                      >
+                        전체보기 <ArrowRight size={14} className='ml-1' />
+                      </Link>
+                    </div>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+                      {currentCategoryData.projects.slice(0, 3).map((p) => (
                         <ContentCard
                           key={p.id}
                           title={p.title}
                           imageUrl={p.imageUrl}
                         />
-                      ))
-                    ) : (
-                      <p className='text-gray-500 col-span-full'>
-                        아직 등록된 프로젝트가 없습니다.
-                      </p>
-                    )}
-                  </div>
-                </Tab.Panel>
-
-                {/* 아티클 패널 */}
-                <Tab.Panel>
-                  <div className='flex justify-between items-center mb-6'>
-                    <h2 className='text-2xl font-bold'>아티클 목록</h2>
-                    {/* ✨ 로그인 되어있다고 가정하고 항상 버튼 노출 ✨ */}
-                    <Link
-                      href={`/articles/new?category=${currentSlug}`}
-                      className='flex items-center bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg hover:bg-indigo-700'
-                    >
-                      <PlusCircle size={16} className='mr-2' /> 새 아티클 작성
-                    </Link>
-                  </div>
-                  <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                    {currentCategoryData.articles.length > 0 ? (
-                      currentCategoryData.articles.map((a) => (
+                      ))}
+                    </div>
+                  </section>
+                  {/* 대표 아티클 섹션 */}
+                  <section>
+                    <div className='flex justify-between items-center mb-4'>
+                      <h2 className='text-2xl font-bold'>대표 아티클</h2>
+                      <Link
+                        href={`/articles?category=${currentSlug}`}
+                        className='flex items-center text-sm font-semibold text-indigo-600 hover:underline'
+                      >
+                        전체보기 <ArrowRight size={14} className='ml-1' />
+                      </Link>
+                    </div>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+                      {currentCategoryData.articles.slice(0, 3).map((a) => (
                         <ContentCard
                           key={a.id}
                           title={a.title}
                           imageUrl={a.imageUrl}
                           author={a.author}
                         />
-                      ))
-                    ) : (
-                      <p className='text-gray-500 col-span-full'>
-                        아직 등록된 아티클이 없습니다.
-                      </p>
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  </section>
                 </Tab.Panel>
               </Tab.Panels>
             </Tab.Group>
