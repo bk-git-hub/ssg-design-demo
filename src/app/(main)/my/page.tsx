@@ -16,7 +16,7 @@ import {
   Users,
   Lock,
   FileText,
-  Heart,
+  ArrowUpCircle,
   ArrowUpDown,
 } from 'lucide-react';
 import { Fragment } from 'react'; // Fragment 추가
@@ -464,7 +464,7 @@ const MyActivityPanel = () => {
     '참여중인 프로젝트',
     '작성한 아티클',
     '좋아요 누른 글',
-    '작성한 Q&A',
+
     '작성한 댓글',
   ];
 
@@ -563,78 +563,162 @@ const currentUser = {
 };
 
 // 3. 계정 설정 탭
-const AccountSettingsPanel = () => (
-  <div className='space-y-12'>
-    <div>
-      <h3 className='text-xl font-bold text-gray-800'>회원 등급</h3>
-      <div className='border-t pt-6 mt-4'>
-        {currentUser.role === '준회원' ? (
-          // 준회원에게 보여지는 승인 요청 UI
-          <div>
-            <p className='text-sm text-gray-600 mb-4'>
-              현재 준회원 등급입니다. 정회원이 되어 Hub의 모든 콘텐츠를 이용하고
-              프로젝트에 참여해보세요!
-            </p>
-            <button className='flex items-center bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700'>
-              <UserCheck size={16} className='mr-2' /> 정회원 승인 요청하기
-            </button>
-          </div>
-        ) : (
-          // 정회원 이상에게 보여지는 상태 UI
+const AccountSettingsPanel = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => setIsModalOpen(true);
+
+  // 요청 가능한 등급 목록 (예시)
+  const requestableTitles = ['정회원', '멘토'];
+
+  // 실제로는 로그인 세션에서 사용자 정보를 가져옵니다.
+  const currentUser = {
+    role: '준회원',
+    title: '준회원',
+  };
+
+  return (
+    <div className='space-y-12'>
+      {/* --- 회원 등급 관리 섹션 --- */}
+      <div>
+        <h3 className='text-xl font-bold text-gray-800'>회원 등급</h3>
+        <div className='border-t pt-6 mt-4'>
           <div className='flex items-center p-4 bg-blue-50 text-blue-800 rounded-lg'>
             <ShieldCheck size={20} className='mr-3 flex-shrink-0' />
             <div>
-              <p className='font-semibold'>현재 정회원 등급입니다.</p>
-              <p className='text-sm'>모든 Hub 콘텐츠에 접근할 수 있습니다.</p>
+              <p className='font-semibold'>현재 등급: {currentUser.title}</p>
+              <p className='text-sm'>
+                현재 등급에 따라 일부 기능 접근이 제한될 수 있습니다.
+              </p>
             </div>
           </div>
-        )}
-      </div>
-    </div>
-    <div className='space-y-6'>
-      <div>
-        <h3 className='text-xl font-bold text-gray-800'>계정 정보</h3>
-        <p className='text-sm text-gray-500 mt-1'>
-          이 정보는 공개되지 않습니다.
-        </p>
-      </div>
-      <div className='border-t pt-6 space-y-4'>
-        <div>
-          <label className='block text-sm font-medium text-gray-700'>
-            이메일 주소
-          </label>
-          <input
-            type='email'
-            disabled
-            value='dev.minjun@email.com'
-            className='mt-1 block w-full border rounded-md p-2 bg-gray-100'
-          />
-        </div>
-        <div>
-          <label className='block text-sm font-medium text-gray-700'>
-            비밀번호 변경
-          </label>
-          <button className='mt-1 text-sm text-indigo-600 hover:underline'>
-            비밀번호 변경하기
-          </button>
+          <div className='mt-4'>
+            {/* ✨ 등급 변경 요청 버튼 (클릭 시 모달 열기) ✨ */}
+            <button
+              onClick={openModal}
+              className='flex items-center bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700'
+            >
+              <ArrowUpCircle size={16} className='mr-2' /> 등급 변경 요청
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div className='space-y-6 border-t pt-8 mt-8'>
-      <div>
-        <h3 className='text-xl font-bold text-red-600'>회원 탈퇴</h3>
-        <p className='text-sm text-gray-500 mt-1'>
-          회원 탈퇴 시 모든 활동 기록이 삭제되며, 복구할 수 없습니다.
-        </p>
+
+      {/* --- 계정 정보 및 회원 탈퇴 섹션 (이전과 동일) --- */}
+      <div className='space-y-6'>
+        <div>
+          <h3 className='text-xl font-bold text-gray-800'>계정 정보</h3>
+        </div>
+        <div className='border-t pt-6 space-y-4'>
+          {/* ... 계정 정보 ... */}
+          <div>
+            <label className='block text-sm font-medium text-gray-700'>
+              이메일 주소
+            </label>
+            <input
+              type='email'
+              disabled
+              value='dev.minjun@email.com'
+              className='mt-1 block w-full border rounded-md p-2 bg-gray-100'
+            />
+          </div>
+          <div>
+            <label className='block text-sm font-medium text-gray-700'>
+              비밀번호 변경
+            </label>
+            <button className='mt-1 text-sm text-indigo-600 hover:underline'>
+              비밀번호 변경하기
+            </button>
+          </div>
+        </div>
+        <div className='space-y-6 border-t pt-8 mt-8'>
+          <div>
+            <h3 className='text-xl font-bold text-red-600'>회원 탈퇴</h3>
+            <p className='text-sm text-gray-500 mt-1'>
+              회원 탈퇴 시 모든 활동 기록이 삭제되며, 복구할 수 없습니다.
+            </p>
+          </div>
+          <div className='pt-6'>
+            <button className='flex items-center bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700'>
+              <Trash2 size={16} className='mr-2' /> 회원 탈퇴
+            </button>
+          </div>
+        </div>
       </div>
-      <div className='pt-6'>
-        <button className='flex items-center bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700'>
-          <Trash2 size={16} className='mr-2' /> 회원 탈퇴
-        </button>
-      </div>
+
+      {/* --- ✨ 등급 변경 요청 모달 ✨ --- */}
+      <Transition appear show={isModalOpen} as={Fragment}>
+        <Dialog as='div' className='relative z-10' onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black bg-opacity-25' />
+          </Transition.Child>
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title
+                    as='h3'
+                    className='text-lg font-bold leading-6 text-gray-900'
+                  >
+                    등급 변경 요청
+                  </Dialog.Title>
+                  <div className='mt-4'>
+                    <p className='text-sm text-gray-500 mb-4'>
+                      운영진의 검토를 거쳐 등급이 변경됩니다. 요청할 등급을
+                      선택해주세요.
+                    </p>
+                    <div>
+                      <label className='block text-sm font-medium mb-1'>
+                        요청 등급
+                      </label>
+                      <select className='w-full border rounded-md p-2'>
+                        {requestableTitles.map((title) => (
+                          <option key={title}>{title}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className='mt-6 flex justify-end space-x-2'>
+                    <button
+                      type='button'
+                      className='inline-flex justify-center rounded-md border bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
+                      onClick={closeModal}
+                    >
+                      취소
+                    </button>
+                    <button
+                      type='button'
+                      className='inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700'
+                      onClick={closeModal}
+                    >
+                      요청 보내기
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
-  </div>
-);
+  );
+};
 
 // --- 메인 페이지 컴포넌트 ---
 export default function SettingsPage() {
