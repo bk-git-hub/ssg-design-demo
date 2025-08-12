@@ -17,6 +17,7 @@ import {
   Plus,
   FileUp,
   Github,
+  Library,
 } from 'lucide-react';
 
 // --- 가상 데이터 ---
@@ -124,6 +125,10 @@ export default function ProjectCreatePage() {
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [categorySearch, setCategorySearch] = useState('');
+  const [prevProject, setPrevProject] = useState<{
+    id: number;
+    title: string;
+  } | null>(null);
 
   // ✨ 3. 기술태그 & 참여인원 mock data 추가 ✨
   const [selectedMembers, setSelectedMembers] = useState([
@@ -325,6 +330,37 @@ export default function ProjectCreatePage() {
                   <div className='w-full h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer'>
                     <FileUp size={24} />
                     <p className='text-xs mt-1'>파일 첨부</p>
+                  </div>
+                  <div className='md:col-span-2'>
+                    <label className='block text-sm font-bold text-gray-500 mb-2'>
+                      시리즈 설정 (선택)
+                    </label>
+                    <div className='relative'>
+                      <Library
+                        size={14}
+                        className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400'
+                      />
+                      <input
+                        type='text'
+                        placeholder='선행 프로젝트 검색...'
+                        className='w-full border rounded-lg pl-9 pr-4 py-2 text-sm'
+                      />
+                      {/* 사용자가 검색하면 자동 완성 결과가 여기에 표시됩니다. */}
+                    </div>
+                    {/* 사용자가 선행 프로젝트를 선택했을 때의 UI 예시 */}
+                    {prevProject && (
+                      <div className='mt-2 flex items-center justify-between bg-gray-100 p-2 rounded-md'>
+                        <span className='text-sm font-medium'>
+                          {prevProject.title}
+                        </span>
+                        <button
+                          onClick={() => setPrevProject(null)}
+                          className='text-gray-400 hover:text-red-500'
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

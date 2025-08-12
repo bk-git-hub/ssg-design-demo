@@ -59,6 +59,16 @@ const projectData = {
         <h2>3. 최종 결과 및 회고</h2>
         <p>개발 결과, 간단한 GET/POST 기반의 Reflected XSS는 성공적으로 탐지할 수 있었습니다. 하지만 DOM-based XSS나 고도화된 필터링을 우회하는 것은 한계가 있었습니다. 프로젝트를 통해 웹 요청과 응답의 구조를 깊이 이해할 수 있었으며, 다음 프로젝트에서는 탐지 엔진을 더 고도화해보고 싶습니다.</p>
     `,
+  previousProject: {
+    id: null,
+    slug: null,
+    title: null,
+  },
+  nextProjects: [
+    { slug: 'xss-scanner-v1.1', title: 'v1.1 성능 개선' },
+    { slug: 'xss-scanner-v1.2', title: 'v1.2 DOM-based 탐지 추가' },
+    { slug: 'xss-scanner-v1.3', title: 'v1.3 리포팅 기능 추가' },
+  ],
 };
 
 const ProjectSidebar = ({ project }: { project: typeof projectData }) => (
@@ -239,6 +249,56 @@ const ProjectSidebar = ({ project }: { project: typeof projectData }) => (
                 </Link>
               </Disclosure.Panel>
             </Transition>
+          </>
+        )}
+      </Disclosure>
+      <Disclosure as='div'>
+        {({ open }) => (
+          <>
+            <Disclosure.Button className='w-full flex justify-between items-center text-left font-bold text-gray-800 p-2 rounded-lg hover:bg-gray-200'>
+              연관 프로젝트
+              <ChevronUp
+                className={`${
+                  open ? 'rotate-180 transform' : ''
+                } h-5 w-5 text-gray-500`}
+              />
+            </Disclosure.Button>
+            <Disclosure.Panel className='px-2 pb-2 pt-1 text-sm text-gray-500 space-y-2'>
+              {/* 선행 프로젝트 */}
+              <div>
+                <h4 className='font-semibold text-gray-600 mb-1'>
+                  선행 프로젝트
+                </h4>
+                {project.previousProject.id ? (
+                  <Link
+                    href={`/projects/${project.previousProject.slug}`}
+                    className='text-indigo-600 hover:underline'
+                  >
+                    {project.previousProject.title}
+                  </Link>
+                ) : (
+                  <span className='text-gray-400'>없음</span>
+                )}
+              </div>
+
+              {/* 후속 프로젝트 목록 */}
+              <div>
+                <h4 className='font-semibold text-gray-600 mb-2'>
+                  후속 프로젝트
+                </h4>
+                <div className='space-y-1'>
+                  {project.nextProjects.map((nextProj) => (
+                    <Link
+                      key={nextProj.slug}
+                      href={`/projects/${nextProj.slug}`}
+                      className='block p-1 rounded-md hover:bg-gray-200 text-indigo-600'
+                    >
+                      {nextProj.title} →
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </Disclosure.Panel>
           </>
         )}
       </Disclosure>
