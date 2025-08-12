@@ -136,7 +136,7 @@ export default function AdminContentPage() {
             <div className='flex justify-between items-center mb-4'>
               <h2 className='text-xl font-bold'>카테고리 목록</h2>
               <Link
-                href={'/admin/content/categories/new'}
+                href={'/admin/contents/categories/new'}
                 className='flex items-center bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg hover:bg-indigo-700'
               >
                 <PlusCircle size={16} className='mr-2' /> 새 카테고리

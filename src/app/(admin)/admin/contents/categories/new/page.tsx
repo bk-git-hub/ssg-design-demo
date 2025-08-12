@@ -39,7 +39,7 @@ export default function EditCategoryPage() {
             className='mt-1 block w-full border rounded-md p-2 bg-gray-100'
           />
         </div>
-        <div>
+        {/* <div>
           <label className='block text-sm font-medium text-gray-700'>
             대표 이미지
           </label>
@@ -47,7 +47,7 @@ export default function EditCategoryPage() {
             <ImageIcon size={32} />
             <p className='text-sm mt-1'>클릭하여 이미지 업로드</p>
           </div>
-        </div>
+        </div> */}
         <div>
           <label className='block text-sm font-medium text-gray-700'>
             소개글
