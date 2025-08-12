@@ -160,11 +160,13 @@ export default function AdminDashboardPage() {
         {/* --- 사이드 액션 패널 --- */}
         <div className='xl:col-span-1 space-y-8'>
           <div className='bg-white p-6 rounded-lg shadow'>
-            <h2 className='font-bold mb-4'>정회원 승인 관리</h2>
+            <h2 className='font-bold mb-4 w-full text-center'>
+              등급 변경 요청
+            </h2>
             <div className='text-center'>
-              <p className='text-5xl font-extrabold text-indigo-600'>5</p>
+              <p className='text-5xl font-extrabold text-indigo-600'>4</p>
               <p className='text-gray-500 mb-4'>
-                명의 회원이 승인을 기다리고 있습니다.
+                명의 회원이 등급 변경 요청을 하였습니다.
               </p>
               <Link
                 href='/admin/users'
@@ -178,7 +180,7 @@ export default function AdminDashboardPage() {
             <h2 className='font-bold mb-4'>빠른 링크</h2>
             <div className='space-y-2'>
               <Link
-                href='/admin/content'
+                href='/admin/contents'
                 className='block text-indigo-600 hover:underline'
               >
                 콘텐츠 관리
@@ -188,18 +190,6 @@ export default function AdminDashboardPage() {
                 className='block text-indigo-600 hover:underline'
               >
                 커뮤니티 관리
-              </Link>
-              <Link
-                href='/projects/new'
-                className='block text-indigo-600 hover:underline'
-              >
-                새 프로젝트 만들기
-              </Link>
-              <Link
-                href='/articles/new'
-                className='block text-indigo-600 hover:underline'
-              >
-                새 아티클 작성하기
               </Link>
             </div>
           </div>
