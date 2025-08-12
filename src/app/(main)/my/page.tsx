@@ -1,5 +1,5 @@
 'use client';
-
+import { useState } from 'react';
 import { Tab } from '@headlessui/react';
 import {
   User,
@@ -7,6 +7,9 @@ import {
   Settings,
   Save,
   Trash2,
+  UserCheck,
+  ShieldCheck,
+  Pencil,
   MessageSquare,
   Target,
   FileText,
@@ -67,51 +70,166 @@ const myComments = [
 // --- UI 컴포넌트 ---
 
 // 1. 프로필 수정 탭
-const EditProfilePanel = () => (
-  <div className='space-y-6'>
-    <div>
-      <h3 className='text-xl font-bold text-gray-800'>프로필 수정</h3>
-      <p className='text-sm text-gray-500 mt-1'>
-        이 정보는 다른 멤버들에게 보여집니다.
-      </p>
-    </div>
-    <div className='border-t pt-6 space-y-4'>
-      <div>
-        <label className='block text-sm font-medium text-gray-700'>이름</label>
-        <input
-          type='text'
-          defaultValue='김민준'
-          className='mt-1 block w-full border rounded-md p-2'
-        />
+const EditProfilePanel = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [userData, setUserData] = useState({
+    name: '김민준',
+    nickname: 'minjun.dev',
+    email: 'dev.minjun@email.com',
+    bio: 'React와 TypeScript를 사랑하는 프런트엔드 개발자입니다.',
+    introduction:
+      '사용자에게 즐거움을 주는 인터랙티브 웹 개발에 관심이 많습니다...',
+    mainSkills: ['React', 'TypeScript', 'Next.js'],
+  });
+
+  return (
+    <div className='space-y-6'>
+      <div className='flex justify-between items-center'>
+        <div>
+          <h3 className='text-xl font-bold text-gray-800'>내 정보</h3>
+          <p className='text-sm text-gray-500 mt-1'>
+            이 정보는 다른 멤버들에게 보여집니다.
+          </p>
+        </div>
+        {!isEditing && (
+          <button
+            onClick={() => setIsEditing(true)}
+            className='flex items-center bg-gray-200 hover:bg-gray-300 font-semibold py-2 px-4 rounded-lg text-sm'
+          >
+            <Pencil size={14} className='mr-2' /> 수정
+          </button>
+        )}
       </div>
-      <div>
-        <label className='block text-sm font-medium text-gray-700'>
-          한 줄 소개
-        </label>
-        <input
-          type='text'
-          defaultValue='React와 TypeScript를 사랑하는 프런트엔드 개발자입니다.'
-          className='mt-1 block w-full border rounded-md p-2'
-        />
-      </div>
-      <div>
-        <label className='block text-sm font-medium text-gray-700'>
-          상세 소개
-        </label>
-        <textarea
-          rows={5}
-          className='mt-1 block w-full border rounded-md p-2'
-          defaultValue='사용자에게 즐거움을 주는 인터랙티브 웹 개발에 관심이 많습니다...'
-        ></textarea>
-      </div>
+
+      {isEditing ? (
+        // --- 수정 모드 ---
+        <>
+          <div className='border-t pt-6 space-y-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div>
+                <label className='block text-sm font-medium text-gray-700'>
+                  이름
+                </label>
+                <input
+                  type='text'
+                  defaultValue={userData.name}
+                  className='mt-1 block w-full border rounded-md p-2'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700'>
+                  닉네임
+                </label>
+                <input
+                  type='text'
+                  defaultValue={userData.nickname}
+                  className='mt-1 block w-full border rounded-md p-2'
+                />
+              </div>
+            </div>
+            <div>
+              <label className='block text-sm font-medium text-gray-700'>
+                이메일 주소
+              </label>
+              <input
+                type='email'
+                disabled
+                value={userData.email}
+                className='mt-1 block w-full border rounded-md p-2 bg-gray-100'
+              />
+            </div>
+            <div>
+              <label className='block text-sm font-medium text-gray-700'>
+                한 줄 소개
+              </label>
+              <input
+                type='text'
+                defaultValue={userData.bio}
+                className='mt-1 block w-full border rounded-md p-2'
+              />
+            </div>
+            <div>
+              <label className='block text-sm font-medium text-gray-700'>
+                주요 기술 스택
+              </label>
+              <input
+                type='text'
+                placeholder='기술 태그 검색 및 추가...'
+                defaultValue={userData.mainSkills.join(', ')}
+                className='mt-1 block w-full border rounded-md p-2'
+              />
+            </div>
+            <div>
+              <label className='block text-sm font-medium text-gray-700'>
+                상세 소개
+              </label>
+              <textarea
+                rows={5}
+                className='mt-1 block w-full border rounded-md p-2'
+                defaultValue={userData.introduction}
+              ></textarea>
+            </div>
+          </div>
+          <div className='flex justify-end border-t pt-4 mt-6 space-x-2'>
+            <button
+              onClick={() => setIsEditing(false)}
+              className='bg-white border font-semibold py-2 px-4 rounded-lg text-sm'
+            >
+              취소
+            </button>
+            <button
+              onClick={() => setIsEditing(false)}
+              className='flex items-center bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 text-sm'
+            >
+              <Save size={16} className='mr-2' /> 변경사항 저장
+            </button>
+          </div>
+        </>
+      ) : (
+        // --- 조회 모드 ---
+        <div className='border-t pt-6 space-y-4 text-sm'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div>
+              <p className='font-medium text-gray-500'>이름</p>
+              <p className='mt-1 text-gray-800'>{userData.name}</p>
+            </div>
+            <div>
+              <p className='font-medium text-gray-500'>닉네임</p>
+              <p className='mt-1 text-gray-800'>{userData.nickname}</p>
+            </div>
+          </div>
+          <div>
+            <p className='font-medium text-gray-500'>이메일 주소</p>
+            <p className='mt-1 text-gray-800'>{userData.email}</p>
+          </div>
+          <div>
+            <p className='font-medium text-gray-500'>한 줄 소개</p>
+            <p className='mt-1 text-gray-800'>{userData.bio}</p>
+          </div>
+          <div>
+            <p className='font-medium text-gray-500'>주요 기술 스택</p>
+            <div className='flex flex-wrap gap-2 mt-2'>
+              {userData.mainSkills.map((skill) => (
+                <span
+                  key={skill}
+                  className='bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-1 rounded-full'
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className='font-medium text-gray-500'>상세 소개</p>
+            <p className='mt-1 text-gray-800 whitespace-pre-wrap'>
+              {userData.introduction}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
-    <div className='flex justify-end border-t pt-4 mt-6'>
-      <button className='flex items-center bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700'>
-        <Save size={16} className='mr-2' /> 프로필 저장
-      </button>
-    </div>
-  </div>
-);
+  );
+};
 
 // 2. 나의 활동 탭
 const ThumbnailCard = ({
@@ -253,10 +371,40 @@ const MyActivityPanel = () => {
     </div>
   );
 };
+const currentUser = {
+  role: '준회원', // '준회원' 또는 '정회원'으로 바꿔서 테스트해보세요.
+  // role: '정회원',
+};
 
 // 3. 계정 설정 탭
 const AccountSettingsPanel = () => (
   <div className='space-y-12'>
+    <div>
+      <h3 className='text-xl font-bold text-gray-800'>회원 등급</h3>
+      <div className='border-t pt-6 mt-4'>
+        {currentUser.role === '준회원' ? (
+          // 준회원에게 보여지는 승인 요청 UI
+          <div>
+            <p className='text-sm text-gray-600 mb-4'>
+              현재 준회원 등급입니다. 정회원이 되어 Hub의 모든 콘텐츠를 이용하고
+              프로젝트에 참여해보세요!
+            </p>
+            <button className='flex items-center bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700'>
+              <UserCheck size={16} className='mr-2' /> 정회원 승인 요청하기
+            </button>
+          </div>
+        ) : (
+          // 정회원 이상에게 보여지는 상태 UI
+          <div className='flex items-center p-4 bg-blue-50 text-blue-800 rounded-lg'>
+            <ShieldCheck size={20} className='mr-3 flex-shrink-0' />
+            <div>
+              <p className='font-semibold'>현재 정회원 등급입니다.</p>
+              <p className='text-sm'>모든 Hub 콘텐츠에 접근할 수 있습니다.</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
     <div className='space-y-6'>
       <div>
         <h3 className='text-xl font-bold text-gray-800'>계정 정보</h3>
@@ -305,7 +453,7 @@ const AccountSettingsPanel = () => (
 // --- 메인 페이지 컴포넌트 ---
 export default function SettingsPage() {
   const tabs = [
-    { name: '프로필 수정', icon: <User />, content: <EditProfilePanel /> },
+    { name: '내 프로필', icon: <User />, content: <EditProfilePanel /> },
     { name: '나의 활동', icon: <Activity />, content: <MyActivityPanel /> },
     {
       name: '계정 설정',
