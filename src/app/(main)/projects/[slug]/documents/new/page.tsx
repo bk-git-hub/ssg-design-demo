@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
+  ChevronDown,
   Image as ImageIcon,
   Tag,
-  Save,
+  Bookmark,
   Send,
   Eye,
-  CheckCircle,
+  FileUp, // ✨ 첨부파일 아이콘 추가
 } from 'lucide-react';
 
 // --- 가상 데이터 ---
@@ -81,7 +83,6 @@ export default function NewDocumentPage() {
                 </button>
               </div>
 
-              {/* 모든 메타데이터 설정을 사이드바로 이동 */}
               <SidebarSection title='도큐먼트 종류'>
                 <select
                   value={docType}
@@ -98,6 +99,18 @@ export default function NewDocumentPage() {
                 <div className='w-full h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer'>
                   <ImageIcon size={24} />
                   <p className='text-xs mt-1'>이미지 업로드</p>
+                </div>
+              </SidebarSection>
+
+              {/* ✨ 첨부 파일 섹션 추가 ✨ */}
+              <SidebarSection title='첨부 파일 (선택)'>
+                <div className='w-full border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer p-4'>
+                  <FileUp size={24} />
+                  <p className='text-xs mt-1 text-center'>
+                    클릭하여 파일 첨부
+                    <br />
+                    (PDF, ZIP 등)
+                  </p>
                 </div>
               </SidebarSection>
 
