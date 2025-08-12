@@ -1,13 +1,22 @@
 'use client';
 import { Tab } from '@headlessui/react';
-import Link from 'next/link'; // Link 컴포넌트 추가
-import { PlusCircle, Award, UserPlus, Search } from 'lucide-react';
+import Link from 'next/link';
+import { PlusCircle, Award, UserPlus, Search, X } from 'lucide-react';
+import { useState } from 'react';
 
 function cn(...classes: (string | boolean)[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-// --- 가상 데이터 (earnerCount 추가) ---
+// --- 가상 데이터 ---
+const allMembers = [
+  { id: 1, name: '김민준', profileImageUrl: 'https://i.pravatar.cc/150?u=1' },
+  { id: 2, name: '이수진', profileImageUrl: 'https://i.pravatar.cc/150?u=2' },
+  { id: 3, name: '박보안', profileImageUrl: 'https://i.pravatar.cc/150?u=3' },
+  { id: 4, name: '최고수', profileImageUrl: 'https://i.pravatar.cc/150?u=4' },
+  { id: 5, name: '정데이터', profileImageUrl: 'https://i.pravatar.cc/150?u=5' },
+  { id: 6, name: '강신입', profileImageUrl: 'https://i.pravatar.cc/150?u=6' },
+];
 const mockBadges = [
   {
     id: 1,
@@ -30,8 +39,12 @@ const mockBadges = [
     earnerCount: 8,
   },
 ];
+const mockMembers = [
+  { id: 1, name: '김민준', profileImageUrl: 'https://i.pravatar.cc/150?u=1' },
+  { id: 2, name: '이수진', profileImageUrl: 'https://i.pravatar.cc/150?u=2' },
+  { id: 3, name: '박보안', profileImageUrl: 'https://i.pravatar.cc/150?u=3' },
+];
 
-// --- UI 컴포넌트 ---
 const AdminTable = ({
   headers,
   children,
@@ -55,6 +68,17 @@ const AdminTable = ({
 
 export default function AdminCommunityPage() {
   const tabs = ['뱃지 관리', '뱃지 부여'];
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [selectedBadge, setSelectedBadge] = useState<any>(mockBadges[0]);
+  const [selectedMembers, setSelectedMembers] = useState([allMembers[0]]);
+
+  const toggleMember = (member: any) => {
+    if (selectedMembers.find((m) => m.id === member.id)) {
+      setSelectedMembers(selectedMembers.filter((m) => m.id !== member.id));
+    } else {
+      setSelectedMembers([...selectedMembers, member]);
+    }
+  };
 
   return (
     <div>
@@ -88,7 +112,6 @@ export default function AdminCommunityPage() {
                 <PlusCircle size={16} className='mr-2' /> 새 뱃지 만들기
               </Link>
             </div>
-            {/* ✨ '획득자 수' 컬럼 추가 ✨ */}
             <AdminTable headers={['이름', '설명', '획득자 수', '관리']}>
               {mockBadges.map((badge) => (
                 <tr key={badge.id} className='bg-white border-b'>
@@ -97,9 +120,8 @@ export default function AdminCommunityPage() {
                   </td>
                   <td className='px-6 py-4'>{badge.description}</td>
                   <td className='px-6 py-4'>
-                    {/* ✨ 클릭 가능한 링크로 변경 ✨ */}
                     <Link
-                      href={`/admin/community/badges/${badge.id}`}
+                      href={`/admin/community/badges/earners/${badge.id}`}
                       className='font-medium text-indigo-600 hover:underline'
                     >
                       {badge.earnerCount} 명
@@ -117,8 +139,98 @@ export default function AdminCommunityPage() {
               ))}
             </AdminTable>
           </Tab.Panel>
+
+          {/* ✨ UX가 개선된 '뱃지 부여' 탭 ✨ */}
           <Tab.Panel className='bg-white p-6 rounded-lg shadow'>
-            {/* ... 뱃지 부여 탭 내용 ... */}
+            <h2 className='text-xl font-bold mb-4'>뱃지 다중 부여</h2>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+              {/* --- 왼쪽: 뱃지 선택 및 최종 확인 --- */}
+              <div className='space-y-6'>
+                <div>
+                  <label className='block text-sm font-medium mb-1'>
+                    뱃지 선택
+                  </label>
+                  <select className='w-full border rounded-md p-2'>
+                    {mockBadges.map((badge) => (
+                      <option key={badge.id} value={badge.id}>
+                        {badge.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className='block text-sm font-medium mb-1'>
+                    선택된 멤버 ({selectedMembers.length})
+                  </label>
+                  <div className='border rounded-md p-2 min-h-[100px] space-y-2'>
+                    {selectedMembers.map((member) => (
+                      <div
+                        key={member.id}
+                        className='flex items-center justify-between bg-gray-100 px-2 py-1 rounded'
+                      >
+                        <div className='flex items-center'>
+                          <img
+                            src={member.profileImageUrl}
+                            className='w-6 h-6 rounded-full mr-2'
+                          />
+                          <span className='text-sm font-medium'>
+                            {member.name}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => toggleMember(member)}
+                          className='text-gray-400 hover:text-red-500'
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className='pt-4 border-t'>
+                  <button className='w-full flex items-center justify-center bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-700'>
+                    <Award size={16} className='mr-2' /> 총{' '}
+                    {selectedMembers.length}명에게 뱃지 부여하기
+                  </button>
+                </div>
+              </div>
+
+              {/* --- 오른쪽: 멤버 검색 및 선택 --- */}
+              <div>
+                <div className='relative mb-2'>
+                  <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+                  <input
+                    type='text'
+                    placeholder='이름으로 검색...'
+                    className='w-full border rounded-md p-2 pl-9'
+                  />
+                </div>
+                <div className='border rounded-md max-h-80 overflow-y-auto'>
+                  {allMembers.map((member) => (
+                    <label
+                      key={member.id}
+                      className='flex items-center p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0'
+                    >
+                      <input
+                        type='checkbox'
+                        className='h-4 w-4 rounded'
+                        checked={
+                          !!selectedMembers.find((m) => m.id === member.id)
+                        }
+                        onChange={() => toggleMember(member)}
+                      />
+                      <img
+                        src={member.profileImageUrl}
+                        className='w-8 h-8 rounded-full mx-3'
+                      />
+                      <span className='text-sm font-medium text-gray-800'>
+                        {member.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
