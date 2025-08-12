@@ -1,6 +1,7 @@
 'use client';
 import { Tab } from '@headlessui/react';
 import { PlusCircle, Search } from 'lucide-react';
+import Link from 'next/link';
 
 function cn(...classes: (string | boolean)[]) {
   return classes.filter(Boolean).join(' ');
@@ -112,9 +113,12 @@ export default function AdminContentPage() {
           <Tab.Panel className='bg-white p-6 rounded-lg shadow'>
             <div className='flex justify-between items-center mb-4'>
               <h2 className='text-xl font-bold'>카테고리 목록</h2>
-              <button className='flex items-center bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg hover:bg-indigo-700'>
+              <Link
+                href={'contents/categories/new'}
+                className='flex items-center bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg hover:bg-indigo-700'
+              >
                 <PlusCircle size={16} className='mr-2' /> 새 카테고리
-              </button>
+              </Link>
             </div>
             <AdminTable
               headers={['이름', 'Slug', '프로젝트 수', '아티클 수', '관리']}
