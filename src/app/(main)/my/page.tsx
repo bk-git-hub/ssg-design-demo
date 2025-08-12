@@ -648,7 +648,7 @@ export default function SettingsPage() {
     },
     {
       id: 4,
-      name: '업적',
+      name: '활동 배지',
       description: '첫 번째 프로젝트를 성공적으로 완료했습니다.',
       awardedDate: '2025-06-20',
       icon: <Award />,
