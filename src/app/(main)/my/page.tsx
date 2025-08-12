@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Tab } from '@headlessui/react';
+import { Tab, Dialog, Transition } from '@headlessui/react';
 import {
   User,
   Activity,
@@ -10,12 +10,16 @@ import {
   UserCheck,
   ShieldCheck,
   Pencil,
-  MessageSquare,
-  Target,
+  Award,
+  CheckCircle,
+  Star,
+  Users,
+  Lock,
   FileText,
   Heart,
   ArrowUpDown,
 } from 'lucide-react';
+import { Fragment } from 'react'; // Fragment 추가
 
 // --- Helper Function ---
 function cn(...classes: (string | boolean)[]) {
@@ -68,6 +72,188 @@ const myComments = [
 ];
 
 // --- UI 컴포넌트 ---
+const MyBadgesPanel = () => {
+  // 전체 뱃지 목록 (획득 여부 포함)
+  const allBadges = [
+    {
+      id: 1,
+      name: '명예의 전당 아티클',
+      description: '운영진이 인정한 우수 아티클을 작성했습니다.',
+      icon: <Award />,
+      isEarned: true,
+    },
+    {
+      id: 2,
+      name: '이달의 기여자',
+      description:
+        '한 달간 가장 많은 아티클을 작성하거나 우수 답변을 채택받은 멤버에게 수여됩니다.',
+      icon: <Star />,
+      isEarned: true,
+    },
+    {
+      id: 3,
+      name: 'Q&A 해결사',
+      description: 'Q&A 게시판에서 10개 이상의 답변이 채택되었습니다.',
+      icon: <CheckCircle />,
+      isEarned: true,
+    },
+    {
+      id: 4,
+      name: '첫 프로젝트 완료',
+      description: '첫 번째 프로젝트를 성공적으로 완료해야 획득할 수 있습니다.',
+      icon: <Award />,
+      isEarned: false,
+    },
+    {
+      id: 5,
+      name: '협업의 달인',
+      description: '3개 이상의 프로젝트에 팀원으로 참여해야 합니다.',
+      icon: <Users />,
+      isEarned: false,
+    },
+    {
+      id: 6,
+      name: '지식 공유의 시작',
+      description: '첫 번째 아티클을 작성하면 획득합니다.',
+      icon: <FileText />,
+      isEarned: false,
+    },
+  ];
+
+  // 모달 열림/닫힘 상태와 선택된 뱃지 정보를 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBadge, setSelectedBadge] = useState<
+    (typeof allBadges)[0] | null
+  >(null);
+
+  const openModal = (badge: (typeof allBadges)[0]) => {
+    setSelectedBadge(badge);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <div className='space-y-6'>
+      <div>
+        <h3 className='text-xl font-bold text-gray-800'>뱃지 보관함</h3>
+        <p className='text-sm text-gray-500 mt-1'>
+          동아리 활동을 통해 다양한 뱃지를 획득해보세요.
+        </p>
+      </div>
+      <div className='border-t pt-6'>
+        <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6'>
+          {allBadges.map((badge) => (
+            <button
+              key={badge.id}
+              onClick={() => openModal(badge)}
+              className={`flex flex-col items-center justify-center text-center p-4 rounded-lg transition-all ${
+                badge.isEarned
+                  ? 'bg-yellow-50 border-2 border-yellow-300 hover:shadow-lg hover:-translate-y-1'
+                  : 'bg-gray-100 border'
+              }`}
+            >
+              <div
+                className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                  badge.isEarned
+                    ? 'bg-yellow-100 text-yellow-500'
+                    : 'bg-gray-200 text-gray-400'
+                }`}
+              >
+                {badge.isEarned ? badge.icon : <Lock />}
+              </div>
+              <p
+                className={`mt-2 text-xs font-semibold ${
+                  badge.isEarned ? 'text-gray-800' : 'text-gray-500'
+                }`}
+              >
+                {badge.name}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* --- 뱃지 상세 정보 모달 --- */}
+      <Transition appear show={isModalOpen} as={Fragment}>
+        <Dialog as='div' className='relative z-10' onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black bg-opacity-25' />
+          </Transition.Child>
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  {selectedBadge && (
+                    <>
+                      <Dialog.Title
+                        as='h3'
+                        className='text-lg font-bold leading-6 text-gray-900 flex items-center'
+                      >
+                        <div
+                          className={`mr-3 ${
+                            selectedBadge.isEarned
+                              ? 'text-yellow-500'
+                              : 'text-gray-400'
+                          }`}
+                        >
+                          {selectedBadge.isEarned ? (
+                            selectedBadge.icon
+                          ) : (
+                            <Lock />
+                          )}
+                        </div>
+                        {selectedBadge.name}
+                      </Dialog.Title>
+                      <div className='mt-4'>
+                        <p className='text-sm text-gray-500'>
+                          {selectedBadge.description}
+                        </p>
+                      </div>
+                      {selectedBadge.isEarned && (
+                        <p className='text-xs text-green-600 font-semibold mt-4'>
+                          획득 완료!
+                        </p>
+                      )}
+                      <div className='mt-4 flex justify-end'>
+                        <button
+                          type='button'
+                          className='inline-flex justify-center rounded-md border border-transparent bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none'
+                          onClick={closeModal}
+                        >
+                          닫기
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </div>
+  );
+};
+// --- 메인 페이지 컴포넌트 ---
 
 // 1. 프로필 수정 탭
 const EditProfilePanel = () => {
@@ -459,6 +645,14 @@ export default function SettingsPage() {
       name: '계정 설정',
       icon: <Settings />,
       content: <AccountSettingsPanel />,
+    },
+    {
+      id: 4,
+      name: '업적',
+      description: '첫 번째 프로젝트를 성공적으로 완료했습니다.',
+      awardedDate: '2025-06-20',
+      icon: <Award />,
+      content: <MyBadgesPanel />,
     },
   ];
 
