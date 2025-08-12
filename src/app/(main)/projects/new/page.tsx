@@ -1,6 +1,7 @@
 'use client';
-
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useState, useRef } from 'react';
+import { Editor as EditorType } from '@toast-ui/react-editor';
 import {
   Image as ImageIcon,
   Link as LinkIcon,
@@ -32,6 +33,7 @@ const allCategories = [
 ];
 
 // --- UI 컴포넌트 ---
+const Editor = dynamic(() => import('@/components/Editor'), { ssr: false });
 const Section = ({
   title,
   children,
@@ -51,6 +53,16 @@ const Section = ({
     {children}
   </div>
 );
+const mockProjectContent = `
+## 1. 프로젝트 배경 및 목표
+많은 웹 애플리케이션에서 XSS 취약점이 여전히 발견되고 있습니다. 초기 단계에서 이를 자동으로 탐지할 수 있는 간단한 도구가 필요하다고 생각했습니다. 본 프로젝트의 목표는 지정된 URL의 파라미터를 분석하여 기본적인 Reflected XSS 패턴을 탐지하는 Python 기반 스캐너를 개발하는 것입니다.
+
+## 2. 주요 내용 및 과정
+Requests와 BeautifulSoup 라이브러리를 사용하여 웹 페이지를 크롤링하고, 폼(form)과 입력 필드를 분석했습니다. 이후 사전에 정의된 XSS 페이로드 목록을 삽입하여 서버의 응답 변화를 감지하는 방식으로 탐지 로직을 구현했습니다.
+
+## 3. 최종 결과 및 회고
+개발 결과, 간단한 GET/POST 기반의 Reflected XSS는 성공적으로 탐지할 수 있었습니다.
+`;
 
 const ChecklistItem = ({ text, isDone }: { text: string; isDone: boolean }) => (
   <div
@@ -70,19 +82,24 @@ const ChecklistItem = ({ text, isDone }: { text: string; isDone: boolean }) => (
 
 const AssistantSidebar = ({
   checklist,
+  onPreview,
 }: {
   checklist: Record<string, boolean>;
+  onPreview: () => void;
 }) => (
-  <aside className='lg:col-span-1 sticky top-24'>
-    <div className=' bg-white p-6 rounded-lg border space-y-6'>
+  <aside className='lg:col-span-1'>
+    <div className='sticky top-24 bg-white p-6 rounded-lg border space-y-6'>
       <div className='space-y-2'>
         <button className='w-full flex items-center justify-center text-sm bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-2 px-4 rounded-lg'>
-          <Send size={14} className='mr-2' /> 생성하기
+          <Send size={14} className='mr-2' /> 발행하기
         </button>
-        {/* <button className='w-full flex items-center justify-center text-sm bg-white border font-semibold py-2 px-4 rounded-lg hover:bg-gray-100'>
+        <button className='w-full flex items-center justify-center text-sm bg-white border font-semibold py-2 px-4 rounded-lg hover:bg-gray-100'>
           <Save size={14} className='mr-2' /> 임시 저장
-        </button> */}
-        <button className='w-full flex items-center justify-center text-sm text-gray-600 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100'>
+        </button>
+        <button
+          onClick={onPreview}
+          className='w-full flex items-center justify-center text-sm text-gray-600 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100'
+        >
           <Eye size={14} className='mr-2' /> 미리보기
         </button>
       </div>
@@ -92,37 +109,11 @@ const AssistantSidebar = ({
         </h3>
         <div className='space-y-2'>
           <ChecklistItem
-            text='제목 작성'
+            text='제목 및 요약 작성'
             isDone={checklist.hasTitleAndSummary}
           />
-          <ChecklistItem
-            text='한줄 소개 작성'
-            isDone={checklist.hasTitleAndSummary}
-          />
-          <ChecklistItem
-            text='대표 이미지 추가'
-            isDone={checklist.hasTitleAndSummary}
-          />
-          <ChecklistItem text='참여 멤버 추가' isDone={checklist.hasMembers} />
-
-          <ChecklistItem
-            text='카테고리 선택'
-            isDone={checklist.hasCategories}
-          />
-
-          <ChecklistItem text='기술 태그 추가' isDone={checklist.hasTags} />
-          <ChecklistItem
-            text='프로젝트 링크 첨부'
-            isDone={checklist.hasTitleAndSummary}
-          />
-          <ChecklistItem
-            text='결과물 첨부'
-            isDone={checklist.hasTitleAndSummary}
-          />
-          <ChecklistItem
-            text='본문 작성'
-            isDone={checklist.hasTitleAndSummary}
-          />
+          <ChecklistItem text='본문 내용 작성' isDone={checklist.hasContent} />
+          {/* ... other checklist items */}
         </div>
       </div>
     </div>
@@ -151,6 +142,16 @@ export default function ProjectCreatePage() {
     hasCategories: true,
     hasTags: selectedTags.length > 0,
   };
+  const editorRef = useRef<EditorType>(null);
+
+  const handlePreview = () => {
+    if (!editorRef.current) return;
+    const content = editorRef.current.getInstance().getMarkdown();
+    const tempId = `preview_project_${Date.now()}`;
+    const previewData = { title, summary, content };
+    localStorage.setItem(tempId, JSON.stringify(previewData));
+    window.open(`/projects/preview/${tempId}`, '_blank');
+  };
 
   return (
     <div className='bg-gray-50 min-h-screen'>
@@ -172,6 +173,9 @@ export default function ProjectCreatePage() {
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
               />
+              <Section title='본문 작성'>
+                <Editor ref={editorRef} initialValue={mockProjectContent} />
+              </Section>
 
               <div className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
@@ -325,15 +329,9 @@ export default function ProjectCreatePage() {
                 </div>
               </div>
             </Section>
-
-            <Section title='프로젝트 내용 및 결과'>
-              <div className='w-full h-[600px] border rounded-md bg-white text-gray-400 flex items-center justify-center p-4 text-center'>
-                [통합된 위지윅(WYSIWYG) 에디터가 여기에 렌더링됩니다.]
-              </div>
-            </Section>
           </div>
 
-          <AssistantSidebar checklist={checklist} />
+          <AssistantSidebar checklist={checklist} onPreview={handlePreview} />
         </div>
       </main>
     </div>

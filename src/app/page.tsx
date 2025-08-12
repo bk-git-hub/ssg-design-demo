@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Target, FileText } from 'lucide-react';
+import Header from '@/components/layout/Header';
 
 // --- 가상 데이터 ---
 // ✨ categories 데이터에 imageUrl 추가 ✨
@@ -231,6 +232,7 @@ const ContentCard = ({
 export default function HubLandingPage() {
   return (
     <div className='bg-white min-h-screen'>
+      <Header />
       <main className='container mx-auto px-4 py-12'>
         <section className='text-center mb-16'>
           <h1 className='text-5xl font-extrabold mb-4'>SSG 지식 허브</h1>
