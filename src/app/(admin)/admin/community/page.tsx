@@ -1,6 +1,7 @@
 'use client';
 import { Tab } from '@headlessui/react';
 import { PlusCircle, Award, UserPlus, Search } from 'lucide-react';
+import Link from 'next/link';
 
 function cn(...classes: (string | boolean)[]) {
   return classes.filter(Boolean).join(' ');
@@ -82,9 +83,12 @@ export default function AdminCommunityPage() {
           <Tab.Panel className='bg-white p-6 rounded-lg shadow'>
             <div className='flex justify-between items-center mb-4'>
               <h2 className='text-xl font-bold'>뱃지 종류 관리</h2>
-              <button className='flex items-center bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg hover:bg-indigo-700'>
+              <Link
+                href={'/admin/community/badges/new'}
+                className='flex items-center bg-indigo-600 text-white text-sm font-bold py-2 px-3 rounded-lg hover:bg-indigo-700'
+              >
                 <PlusCircle size={16} className='mr-2' /> 새 뱃지 만들기
-              </button>
+              </Link>
             </div>
             <AdminTable headers={['이름', '설명', '관리']}>
               {mockBadges.map((badge) => (
